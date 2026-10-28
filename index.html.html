@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thu Trang Work - Personal Productivity Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            yellow: '#FEF08A',
+                            lightYellow: '#FEF9C3',
+                            darkYellow: '#EAB308',
+                            bgLight: '#FAF9F5',
+                            cardLight: '#FFFFFF',
+                            cardDark: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-pastel-bgLight dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- DESKTOP SIDEBAR -->
+        <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 z-20">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-300 dark:bg-amber-500 flex items-center justify-center shadow-md font-bold text-amber-900 dark:text-slate-900 text-xl">
+                        TT
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 dark:text-white leading-tight">Thu Trang Work</h1>
+                        <span class="text-xs text-amber-600 dark:text-amber-400 font-medium">Personal Workspace</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300">
+                    <i class="fa-solid fa-chart-pie text-lg w-5"></i>
+                    <span>Dashboard Today</span>
+                </button>
+
+                <button onclick="switchTab('tasks')" id="nav-tasks" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-list-check text-lg w-5"></i>
+                    <span>Danh sách Công việc</span>
+                </button>
+
+                <button onclick="switchTab('health')" id="nav-health" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-heart-pulse text-lg w-5"></i>
+                    <span>Chăm sóc Sức khỏe</span>
+                </button>
+
+                <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-clock-rotate-left text-lg w-5"></i>
+                    <span>Lịch sử & Phân tích</span>
+                </button>
+            </nav>
+
+            <!-- Bottom Theme Toggle -->
+            <div class="p-4 border-t border-slate-100 dark:border-slate-700/60">
+                <button onclick="toggleDarkMode()" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                    <span class="flex items-center space-x-2">
+                        <i id="theme-icon" class="fa-solid fa-moon text-amber-500"></i>
+                        <span id="theme-text">Chế độ tối</span>
+                    </span>
+                    <div class="w-8 h-4 bg-slate-300 dark:bg-amber-500 rounded-full relative transition">
+                        <div id="theme-dot" class="w-3 h-3 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-200 dark:transform dark:translate-x-4"></div>
+                    </div>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50/50 dark:bg-slate-900">
+            
+            <!-- TOP BAR -->
+            <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="md:hidden w-8 h-8 rounded-lg bg-amber-300 flex items-center justify-center font-bold text-amber-900 text-sm">
+                        TT
+                    </div>
+                    <div>
+                        <h2 id="page-title" class="text-lg font-bold text-slate-800 dark:text-white">Dashboard Today</h2>
+                    </div>
+                </div>
+
+                <!-- Right Action Bar: Notification Toggle + Date -->
+                <div class="flex items-center space-x-3">
+                    <!-- WEB NOTIFICATION TOGGLE BUTTON -->
+                    <button id="notif-btn" onclick="requestNotificationPermission()" class="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-slate-700 dark:text-amber-300 dark:hover:bg-slate-600 transition">
+                        <i id="notif-icon" class="fa-solid fa-bell"></i>
+                        <span id="notif-status-text">Bật thông báo đẩy</span>
+                    </button>
+
+                    <!-- Date & Lunar Date Badge -->
+                    <div class="hidden sm:flex items-center space-x-2 bg-amber-50 dark:bg-slate-700/60 border border-amber-200/60 dark:border-slate-600 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200">
+                        <i class="fa-regular fa-calendar text-amber-600 dark:text-amber-400"></i>
+                        <span id="header-date">...</span>
+                        <span class="text-amber-300 dark:text-slate-500">|</span>
+                        <span id="header-lunar" class="text-amber-700 dark:text-amber-300 font-semibold">...</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTAINER FOR TABS -->
+            <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 pb-24 md:pb-6">
+
+                <!-- ================= TAB 1: DASHBOARD TODAY ================= -->
+                <div id="tab-dashboard" class="tab-content space-y-6">
+                    
+                    <!-- Motivational Quote Banner -->
+                    <div class="bg-gradient-to-r from-amber-100 via-amber-50 to-orange-100 dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-800 border border-amber-200/80 dark:border-slate-700 p-5 rounded-2xl shadow-sm relative overflow-hidden">
+                        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-md bg-amber-200/70 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 text-xs font-semibold mb-2">
+                                    <i class="fa-solid fa-quote-left text-amber-600"></i>
+                                    <span>Động lực mỗi ngày</span>
+                                </div>
+                                <p id="daily-quote" class="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100 italic">
+                                    "Hành trình ngàn dặm luôn bắt đầu bằng một bước chân nhỏ."
+                                </p>
+                            </div>
+
+                            <!-- Mood Widget -->
+                            <div class="bg-white/80 dark:bg-slate-700/80 backdrop-blur border border-amber-200 dark:border-slate-600 p-3 rounded-xl flex items-center space-x-3 shrink-0">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Tâm trạng hôm nay:</span>
+                                <div class="flex items-center space-x-1.5" id="mood-picker">
+                                    <button onclick="setMood('great')" title="Tuyệt vời" class="p-1.5 rounded-lg hover:bg-amber-100 dark:hover:bg-slate-600 transition text-xl">😄</button>
+                                    <button onclick="setMood('good')" title="Tốt" class="p-1.5 rounded-lg hover:bg-amber-100 dark:hover:bg-slate-600 transition text-xl">🙂</button>
+                                    <button onclick="setMood('normal')" title="Bình thường" class="p-1.5 rounded-lg hover:bg-amber-100 dark:hover:bg-slate-600 transition text-xl">😐</button>
+                                    <button onclick="setMood('tired')" title="Mệt mỏi" class="p-1.5 rounded-lg hover:bg-amber-100 dark:hover:bg-slate-600 transition text-xl">😫</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KHU VỰC 1: TỔNG QUAN HÔM NAY (Metric Cards) -->
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center space-x-2">
+                            <i class="fa-solid fa-chart-simple text-amber-500"></i>
+                            <span>Tổng quan chỉ số hôm nay</span>
+                        </h3>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+                            <!-- Card 1: Tổng số việc -->
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+                                    <span class="text-xs font-medium">Tổng số việc hôm nay</span>
+                                    <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-list-check"></i>
+                                    </div>
+                                </div>
+                                <div id="dash-total-tasks" class="text-2xl font-bold text-slate-800 dark:text-white">0</div>
+                            </div>
+
+                            <!-- Card 2: Đã hoàn thành -->
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-emerald-200/60 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-emerald-600 dark:text-emerald-400 mb-2">
+                                    <span class="text-xs font-medium">Đã hoàn thành</span>
+                                    <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </div>
+                                </div>
+                                <div id="dash-completed-tasks" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">0</div>
+                            </div>
+
+                            <!-- Card 3: Quá hạn (Đang trễ) -->
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-rose-200/60 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-rose-600 dark:text-rose-400 mb-2">
+                                    <span class="text-xs font-medium">Đang trễ (Quá hạn)</span>
+                                    <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                </div>
+                                <div id="dash-overdue-tasks" class="text-2xl font-bold text-rose-600 dark:text-rose-400">0</div>
+                            </div>
+
+                            <!-- Card 4: Tỷ lệ hoàn thành -->
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+                                    <span class="text-xs font-medium">Tỷ lệ hoàn thành</span>
+                                    <div class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </div>
+                                </div>
+                                <div id="dash-completion-rate" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">0%</div>
+                            </div>
+
+                            <!-- Card 5: Lượng nước đã uống -->
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-blue-200/60 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-blue-600 dark:text-blue-400 mb-2">
+                                    <span class="text-xs font-medium">Nước đã uống</span>
+                                    <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-glass-water"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span id="dash-water-intake" class="text-2xl font-bold text-blue-600 dark:text-blue-400">0</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-normal"> / <span id="dash-water-goal">2000</span>ml</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TIMELINE CÔNG VIỆC HÔM NAY (Tự động cập nhật) -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 p-5 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center space-x-2">
+                                <i class="fa-regular fa-clock text-amber-500"></i>
+                                <span>Timeline Công việc hôm nay</span>
+                            </h3>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded-lg">
+                                <i class="fa-solid fa-rotate text-amber-500 mr-1"></i>Tự động cập nhật
+                            </span>
+                        </div>
+
+                        <!-- Timeline List -->
+                        <div id="dash-timeline-list" class="space-y-3 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
+                            <!-- Items dynamically loaded -->
+                        </div>
+                    </div>
+
+                    <!-- TỔNG KẾT NHANH -->
+                    <div class="bg-amber-50/60 dark:bg-slate-800/80 border border-amber-200/70 dark:border-slate-700 p-5 rounded-2xl shadow-sm">
+                        <h3 class="text-base font-bold text-amber-900 dark:text-amber-300 mb-3 flex items-center space-x-2">
+                            <i class="fa-solid fa-clipboard-check text-amber-600"></i>
+                            <span>Tổng kết nhanh hôm nay</span>
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div class="bg-white dark:bg-slate-700/60 p-3.5 rounded-xl border border-amber-100 dark:border-slate-600">
+                                <span class="text-slate-500 dark:text-slate-400 block text-xs">Tiến độ hôm nay:</span>
+                                <span id="summary-progress-text" class="font-bold text-slate-800 dark:text-white text-base">0/0 việc hoàn thành</span>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700/60 p-3.5 rounded-xl border border-amber-100 dark:border-slate-600">
+                                <span class="text-slate-500 dark:text-slate-400 block text-xs">Việc đang trễ (quá hạn):</span>
+                                <span id="summary-remaining-text" class="font-bold text-rose-600 dark:text-rose-400 text-base">0 công việc</span>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700/60 p-3.5 rounded-xl border border-amber-100 dark:border-slate-600">
+                                <span class="text-slate-500 dark:text-slate-400 block text-xs">Tình trạng:</span>
+                                <span id="summary-action-text" class="font-bold text-amber-700 dark:text-amber-400 text-base">Tốt</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ================= TAB 2: DANH SÁCH CÔNG VIỆC ================= -->
+                <div id="tab-tasks" class="tab-content space-y-6 hidden">
+                    
+                    <!-- Header Action Bar -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-white">Quản lý Công việc</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Xem danh sách, phân loại nhóm và tích hoàn thành công việc</p>
+                        </div>
+                        <button onclick="openTaskModal()" class="inline-flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-semibold text-sm transition shadow-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Thêm công việc mới</span>
+                        </button>
+                    </div>
+
+                    <!-- Filter Tabs with Badges & Dates -->
+                    <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none" id="task-filter-tabs">
+                        <!-- Filters dynamically generated -->
+                    </div>
+
+                    <!-- Tasks Table -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase border-b border-slate-200/80 dark:border-slate-700">
+                                    <tr>
+                                        <th class="py-3.5 px-4">Tên công việc</th>
+                                        <th class="py-3.5 px-4">Nhóm</th>
+                                        <th class="py-3.5 px-4">Ưu tiên</th>
+                                        <th class="py-3.5 px-4">Trạng thái (Done)</th>
+                                        <th class="py-3.5 px-4">Ghi chú</th>
+                                        <th class="py-3.5 px-4 text-right">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tasks-table-body" class="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                    <!-- Rows injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ================= TAB 3: CHĂM SÓC SỨC KHỎE ================= -->
+                <div id="tab-health" class="tab-content space-y-6 hidden">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- WATER TRACKER -->
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 p-5 shadow-sm space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg">
+                                        <i class="fa-solid fa-droplet"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-800 dark:text-white">Theo dõi Uống nước</h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Ghi nhận chính xác từ 0ml hôm nay</p>
+                                    </div>
+                                </div>
+                                <button onclick="setWaterGoalPrompt()" class="text-xs font-semibold text-blue-600 hover:underline bg-blue-50 dark:bg-slate-700 px-2.5 py-1 rounded-lg">
+                                    <i class="fa-solid fa-pen-to-square mr-1"></i>Mục tiêu: <span id="health-goal-display">2000</span>ml
+                                </button>
+                            </div>
+
+                            <!-- Progress Display -->
+                            <div class="text-center py-4 bg-blue-50/50 dark:bg-slate-700/40 rounded-xl border border-blue-100 dark:border-slate-600">
+                                <div id="health-water-current" class="text-3xl font-extrabold text-blue-600 dark:text-blue-400">0 ml</div>
+                                <div id="health-water-percent" class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">0% mục tiêu ngày</div>
+                                
+                                <div class="w-full bg-slate-200 dark:bg-slate-600 h-2.5 rounded-full mt-3 overflow-hidden max-w-xs mx-auto">
+                                    <div id="health-water-bar" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Add Cups -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Thêm cốc nước đã uống (Tùy chọn ml):</label>
+                                <div class="grid grid-cols-4 gap-2">
+                                    <button onclick="addWater(150)" class="py-2.5 px-2 bg-blue-50 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-slate-600 border border-blue-200 dark:border-slate-600 rounded-xl text-xs font-semibold text-blue-700 dark:text-blue-300 flex flex-col items-center space-y-1 transition">
+                                        <i class="fa-solid fa-wine-glass"></i>
+                                        <span>+150ml</span>
+                                    </button>
+                                    <button onclick="addWater(200)" class="py-2.5 px-2 bg-blue-50 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-slate-600 border border-blue-200 dark:border-slate-600 rounded-xl text-xs font-semibold text-blue-700 dark:text-blue-300 flex flex-col items-center space-y-1 transition">
+                                        <i class="fa-solid fa-glass-water"></i>
+                                        <span>+200ml</span>
+                                    </button>
+                                    <button onclick="addWater(250)" class="py-2.5 px-2 bg-blue-50 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-slate-600 border border-blue-200 dark:border-slate-600 rounded-xl text-xs font-semibold text-blue-700 dark:text-blue-300 flex flex-col items-center space-y-1 transition">
+                                        <i class="fa-solid fa-mug-hot"></i>
+                                        <span>+250ml</span>
+                                    </button>
+                                    <button onclick="addWater(500)" class="py-2.5 px-2 bg-blue-50 hover:bg-blue-100 dark:bg-slate-700 dark:hover:bg-slate-600 border border-blue-200 dark:border-slate-600 rounded-xl text-xs font-semibold text-blue-700 dark:text-blue-300 flex flex-col items-center space-y-1 transition">
+                                        <i class="fa-solid fa-bottle-water"></i>
+                                        <span>+500ml</span>
+                                    </button>
+                                </div>
+                                <button onclick="resetWater()" class="w-full mt-3 py-1.5 text-xs text-rose-500 hover:text-rose-700 transition text-center">
+                                    <i class="fa-solid fa-rotate-right mr-1"></i>Đặt lại lượng nước hôm nay về 0ml
+                                </button>
+                            </div>
+
+                            <!-- Reminder config -->
+                            <div class="bg-slate-50 dark:bg-slate-700/30 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700 flex items-center justify-between text-xs">
+                                <span class="text-slate-600 dark:text-slate-300 font-medium">Nhắc uống nước tự động trên thiết bị</span>
+                                <span id="water-notif-badge" class="px-2 py-1 bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300 font-bold rounded">Đang tắt</span>
+                            </div>
+                        </div>
+
+                        <!-- SLEEP TRACKER -->
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 p-5 shadow-sm space-y-4">
+                            <div class="flex items-center space-x-3 border-b border-slate-100 dark:border-slate-700 pb-3">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-moon"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 dark:text-white">Giấc ngủ & Lịch nghỉ ngơi</h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Đặt giờ đi ngủ chuẩn (Đồng bộ nhắc giờ)</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Mục tiêu giờ đi ngủ trong ngày (Khung 12h / 24h):</label>
+                                    <input type="time" id="sleep-target-time" value="22:30" onchange="updateSleepGoal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                </div>
+
+                                <div class="p-4 bg-indigo-50/60 dark:bg-slate-700/40 rounded-xl border border-indigo-100 dark:border-slate-600 space-y-2">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-slate-600 dark:text-slate-300">Thời lượng ngủ khuyến nghị:</span>
+                                        <span class="font-bold text-indigo-700 dark:text-indigo-300">7 - 8 tiếng / ngày</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-slate-600 dark:text-slate-300">Thông báo nhắc giờ ngủ:</span>
+                                        <span class="font-semibold text-emerald-600 dark:text-emerald-400">Nhắc trước 30 phút</span>
+                                    </div>
+                                </div>
+
+                                <p class="text-xs text-slate-400 italic">
+                                    * Hệ thống sẽ tự động phát thông báo đẩy ra màn hình điện thoại/máy tính trước 30 phút khi đến giờ ngủ.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ================= TAB 4: LỊCH SỬ & PHÂN TÍCH ================= -->
+                <div id="tab-analytics" class="tab-content space-y-6 hidden">
+                    
+                    <!-- Filters & Mode Selector -->
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold uppercase text-slate-400">Chế độ xem:</span>
+                            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-700 rounded-xl">
+                                <button onclick="setHistoryView('day')" id="btn-hist-day" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm">Ngày</button>
+                                <button onclick="setHistoryView('month')" id="btn-hist-month" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-300">Tháng</button>
+                                <button onclick="setHistoryView('year')" id="btn-hist-year" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-300">Năm (365 Ngày)</button>
+                            </div>
+                        </div>
+
+                        <!-- Category Group Filter -->
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold uppercase text-slate-400 shrink-0">Bộ lọc Nhóm:</span>
+                            <select id="history-group-filter" onchange="renderHistoryView()" class="px-3 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                <option value="ALL">Tất cả các nhóm</option>
+                                <option value="Freelancer">💻 Freelancer</option>
+                                <option value="Full-time">💼 Công việc Full-time</option>
+                                <option value="Business">📈 Kinh doanh</option>
+                                <option value="Shopping">🛒 Mua sắm</option>
+                                <option value="Living">🏡 Sinh hoạt</option>
+                                <option value="Finance">💰 Tài chính cá nhân</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 1: HISTORICAL DAY VIEW -->
+                    <div id="history-sub-day" class="space-y-4">
+                        <div class="flex items-center space-x-3 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                            <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Chọn ngày truy xuất:</label>
+                            <input type="date" id="history-date-picker" onchange="renderHistoryDay()" class="px-3 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-medium">
+                        </div>
+
+                        <div id="history-day-content" class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-4">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 2: HISTORICAL MONTH VIEW (Calendar with Lines) -->
+                    <div id="history-sub-month" class="hidden space-y-4">
+                        <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                            <h4 id="month-calendar-title" class="font-bold text-slate-800 dark:text-white">Tháng 10, 2026</h4>
+                            <div class="flex space-x-2">
+                                <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-x-auto">
+                            <div class="grid grid-cols-7 gap-2 min-w-[700px] text-center text-xs font-bold text-slate-400 mb-2">
+                                <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+                            </div>
+                            <div id="month-calendar-grid" class="grid grid-cols-7 gap-2 min-w-[700px]">
+                                <!-- Cells injected dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 3: HISTORICAL YEAR VIEW (365 Days Heatmap) -->
+                    <div id="history-sub-year" class="hidden space-y-4">
+                        <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                            <h4 id="year-title" class="font-bold text-slate-800 dark:text-white">Yearly Activity Heatmap (2026)</h4>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="changeYear(-1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-xl text-xs font-semibold"><i class="fa-solid fa-chevron-left mr-1"></i>Năm trước</button>
+                                <span id="current-year-display" class="font-bold text-sm px-2">2026</span>
+                                <button onclick="changeYear(1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-xl text-xs font-semibold">Năm sau<i class="fa-solid fa-chevron-right ml-1"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-x-auto">
+                            <div id="yearly-heatmap-grid" class="flex flex-wrap gap-1.5 min-w-[750px] justify-start">
+                                <!-- 365 boxes injected -->
+                            </div>
+                            <div class="flex items-center justify-end space-x-2 text-xs text-slate-400 mt-4">
+                                <span>Thấp</span>
+                                <div class="w-3 h-3 rounded bg-slate-100 dark:bg-slate-700"></div>
+                                <div class="w-3 h-3 rounded bg-amber-200"></div>
+                                <div class="w-3 h-3 rounded bg-amber-400"></div>
+                                <div class="w-3 h-3 rounded bg-amber-600"></div>
+                                <span>Cao</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVITY LOG SECTION -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 p-5 shadow-sm space-y-3">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm flex items-center space-x-2">
+                            <i class="fa-solid fa-list-ol text-amber-500"></i>
+                            <span>Activity Log (Nhật ký thay đổi hệ thống)</span>
+                        </h4>
+                        <div id="activity-log-container" class="space-y-2 max-h-60 overflow-y-auto pr-1 text-xs divide-y divide-slate-100 dark:divide-slate-700/50">
+                            <!-- Logs injected -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+        <!-- BOTTOM MOBILE NAVIGATION -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 z-30 flex items-center justify-around py-2 px-1">
+            <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="flex flex-col items-center space-y-1 text-amber-600 dark:text-amber-400 p-1">
+                <i class="fa-solid fa-chart-pie text-lg"></i>
+                <span class="text-[10px] font-medium">Dashboard</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="mobile-nav-tasks" class="flex flex-col items-center space-y-1 text-slate-400 p-1">
+                <i class="fa-solid fa-list-check text-lg"></i>
+                <span class="text-[10px] font-medium">Công việc</span>
+            </button>
+            <button onclick="switchTab('health')" id="mobile-nav-health" class="flex flex-col items-center space-y-1 text-slate-400 p-1">
+                <i class="fa-solid fa-heart-pulse text-lg"></i>
+                <span class="text-[10px] font-medium">Sức khỏe</span>
+            </button>
+            <button onclick="switchTab('analytics')" id="mobile-nav-analytics" class="flex flex-col items-center space-y-1 text-slate-400 p-1">
+                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                <span class="text-[10px] font-medium">Lịch sử</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- MODAL: ADD / EDIT TASK -->
+    <div id="task-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-md w-full p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                <h3 id="modal-title" class="font-bold text-slate-800 dark:text-white">Thêm công việc mới</h3>
+                <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="task-form" onsubmit="handleSaveTask(event)" class="space-y-3">
+                <input type="hidden" id="task-id">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Tên công việc *</label>
+                    <input type="text" id="task-title" required placeholder="Ví dụ: Thiết kế Banner khuyến mãi..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Nhóm công việc</label>
+                        <select id="task-group" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                            <option value="Freelancer">💻 Freelancer</option>
+                            <option value="Full-time">💼 Công việc Full-time</option>
+                            <option value="Business">📈 Kinh doanh</option>
+                            <option value="Shopping">🛒 Mua sắm</option>
+                            <option value="Living">🏡 Sinh hoạt</option>
+                            <option value="Finance">💰 Tài chính cá nhân</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Mức ưu tiên</label>
+                        <select id="task-priority" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                            <option value="Cao">🔴 Cao</option>
+                            <option value="Trung bình" selected>🟡 Trung bình</option>
+                            <option value="Thấp">🟢 Thấp</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Ngày thực hiện</label>
+                        <input type="date" id="task-date" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Giờ thực hiện</label>
+                        <input type="time" id="task-time" value="09:00" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Ghi chú thêm</label>
+                    <textarea id="task-notes" rows="2" placeholder="Nội dung chi tiết hoặc yêu cầu..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <button type="button" onclick="closeTaskModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Hủy</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-400 hover:bg-amber-500 text-amber-950 shadow-sm">Lưu công việc</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        const VIETNAMESE_QUOTES = [
+            "Hành trình ngàn dặm luôn bắt đầu bằng một bước chân nhỏ.",
+            "Thành công là tổng hợp của những nỗ lực nhỏ được lặp đi lặp lại mỗi ngày.",
+            "Kỷ luật là cầu nối giữa mục tiêu và thành tựu.",
+            "Tập trung vào sự tiến bộ, không phải sự hoàn hảo.",
+            "Mỗi ngày mới là một cơ hội mới để trở thành phiên bản tốt hơn."
+        ];
+
+        const GROUPS = {
+            'Freelancer': { name: 'Freelancer', icon: 'fa-solid fa-laptop-code', color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/30' },
+            'Full-time': { name: 'Công việc Full-time', icon: 'fa-solid fa-briefcase', color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/30' },
+            'Business': { name: 'Kinh doanh', icon: 'fa-solid fa-chart-line', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30' },
+            'Shopping': { name: 'Mua sắm', icon: 'fa-solid fa-cart-shopping', color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/30' },
+            'Living': { name: 'Sinh hoạt', icon: 'fa-solid fa-house', color: 'text-orange-600 bg-orange-50 dark:bg-orange-900/30' },
+            'Finance': { name: 'Tài chính cá nhân', icon: 'fa-solid fa-wallet', color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30' }
+        };
+
+        let state = {
+            tasks: [],
+            health: {
+                waterGoal: 2000,
+                waterCurrent: 0,
+                sleepGoalTime: "22:30",
+                todayMood: 'great'
+            },
+            activityLogs: [],
+            activeFilterTab: 'today',
+            historyView: 'day',
+            selectedHistoryDate: new Date().toISOString().split('T')[0],
+            selectedMonth: new Date().getMonth(),
+            selectedYear: new Date().getFullYear(),
+            notifiedTasks: new Set() // Lưu các task đã push notification rồi
+        };
+
+        function getTodayStr() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function formatDateVN(dateObj) {
+            const d = new Date(dateObj);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function getRelativeDateStr(offsetDays) {
+            const d = new Date();
+            d.setDate(d.getDate() + offsetDays);
+            return d.toISOString().split('T')[0];
+        }
+
+        function getLunarDateStr(d) {
+            return `Âm lịch: 18/09`;
+        }
+
+        window.onload = function() {
+            loadInitialData();
+            setupHeaderDates();
+            setRandomQuote();
+            checkNotificationStatus();
+            initNotificationScheduler();
+            renderAll();
+        };
+
+        // ================= WEB NOTIFICATION ENGINE =================
+        function checkNotificationStatus() {
+            const btnText = document.getElementById('notif-status-text');
+            const btnIcon = document.getElementById('notif-icon');
+            const waterBadge = document.getElementById('water-notif-badge');
+
+            if (!("Notification" in window)) {
+                btnText.textContent = "Trình duyệt không hỗ trợ";
+                return;
+            }
+
+            if (Notification.permission === "granted") {
+                btnText.textContent = "Thông báo: Đã bật";
+                btnIcon.className = "fa-solid fa-bell text-emerald-500";
+                if (waterBadge) {
+                    waterBadge.textContent = "Đã bật";
+                    waterBadge.className = "px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300 font-bold rounded";
+                }
+            } else if (Notification.permission === "denied") {
+                btnText.textContent = "Thông báo: Bị chặn";
+                btnIcon.className = "fa-solid fa-bell-slash text-rose-500";
+            } else {
+                btnText.textContent = "Bật thông báo đẩy";
+                btnIcon.className = "fa-solid fa-bell text-amber-500";
+            }
+        }
+
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("Rất tiếc, trình duyệt thiết bị này không hỗ trợ Web Notification.");
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                checkNotificationStatus();
+                if (permission === "granted") {
+                    sendPushNotification("Thu Trang Work", "Bạn đã bật thành công thông báo đẩy trên thiết bị!");
+                    logActivity('NOTIFICATION', 'Người dùng đã bật thông báo đẩy thành công');
+                } else if (permission === "denied") {
+                    alert("Bạn đã từ chối nhận thông báo. Hãy bật lại trong cài đặt trang web của trình duyệt nếu muốn nhận nhắc nhở.");
+                }
+            });
+        }
+
+        function sendPushNotification(title, body, tag = null) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                try {
+                    const notif = new Notification(title, {
+                        body: body,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3119/3119338.png',
+                        tag: tag || 'tt-work-notif'
+                    });
+                    
+                    notif.onclick = function() {
+                        window.focus();
+                        notif.close();
+                    };
+                } catch (e) {
+                    console.log("Push notification failed:", e);
+                }
+            }
+        }
+
+        // Tự động quét và đẩy thông báo định kỳ mỗi 30 giây
+        function initNotificationScheduler() {
+            setInterval(() => {
+                if (Notification.permission !== "granted") return;
+
+                const now = new Date();
+                const todayStr = getTodayStr();
+                const currentHHMM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+                // 1. Quét công việc hôm nay trùng với giờ hiện tại
+                state.tasks.forEach(task => {
+                    if (task.date === todayStr && !task.completed && task.time === currentHHMM) {
+                        const notifKey = `task-${task.id}-${task.time}`;
+                        if (!state.notifiedTasks.has(notifKey)) {
+                            state.notifiedTasks.add(notifKey);
+                            sendPushNotification(
+                                `⏰ Đã đến giờ: ${task.title}`,
+                                `Nhóm: ${task.group} | Ưu tiên: ${task.priority}. Bấm vào đây để kiểm tra!`,
+                                notifKey
+                            );
+                            logActivity('NOTIFICATION', `Đã đẩy thông báo công việc: "${task.title}"`);
+                        }
+                    }
+                });
+
+                // 2. Nhắc nhở giờ ngủ (nhắc trước 30 phút)
+                if (state.health.sleepGoalTime) {
+                    const [sleepH, sleepM] = state.health.sleepGoalTime.split(':').map(Number);
+                    let targetSleepDate = new Date();
+                    targetSleepDate.setHours(sleepH, sleepM, 0, 0);
+
+                    const diffMinutes = Math.floor((targetSleepDate - now) / (1000 * 60));
+                    if (diffMinutes === 30) {
+                        const sleepKey = `sleep-${todayStr}`;
+                        if (!state.notifiedTasks.has(sleepKey)) {
+                            state.notifiedTasks.add(sleepKey);
+                            sendPushNotification(
+                                `🌙 Chuẩn bị đi ngủ (Còn 30 phút)`,
+                                `Lịch ngủ mục tiêu của bạn là ${state.health.sleepGoalTime}. Hãy thư giãn và chuẩn bị nghỉ ngơi nhé!`,
+                                sleepKey
+                            );
+                        }
+                    }
+                }
+
+                // 3. Định kỳ nhắc uống nước nếu chưa đủ chỉ tiêu (mỗi giờ ở phút thứ 00)
+                if (now.getMinutes() === 0 && state.health.waterCurrent < state.health.waterGoal) {
+                    const waterKey = `water-${todayStr}-${now.getHours()}`;
+                    if (!state.notifiedTasks.has(waterKey)) {
+                        state.notifiedTasks.add(waterKey);
+                        sendPushNotification(
+                            `💧 Đã đến lúc uống nước!`,
+                            `Hiện tại bạn mới uống ${state.health.waterCurrent}/${state.health.waterGoal}ml. Uống ngay 1 cốc nước nhé!`,
+                            waterKey
+                        );
+                    }
+                }
+
+            }, 30000); // 30 giây quét 1 lần
+        }
+
+        // ==========================================================
+
+        function loadInitialData() {
+            const today = getTodayStr();
+            const tomorrow = getRelativeDateStr(1);
+            const dayAfter = getRelativeDateStr(2);
+            const overdue = getRelativeDateStr(-2);
+
+            // Binary Status: completed (true / false)
+            state.tasks = [
+                { id: '1', title: 'Gửi báo cáo doanh thu tuần', group: 'Full-time', priority: 'Cao', completed: true, date: today, time: '09:00', notes: 'Gửi cho Anh Giám Đốc' },
+                { id: '2', title: 'Họp với khách hàng Freelance UI/UX', group: 'Freelancer', priority: 'Cao', completed: false, date: today, time: '14:30', notes: 'Thảo luận wireframe' },
+                { id: '3', title: 'Thanh toán tiền điện thoại & Internet', group: 'Finance', priority: 'Trung bình', completed: false, date: today, time: '18:00', notes: '' },
+                { id: '4', title: 'Mua thực phẩm tuần mới', group: 'Shopping', priority: 'Thấp', completed: false, date: tomorrow, time: '10:00', notes: 'Siêu thị WinMart' },
+                { id: '5', title: 'Kiểm kê tồn kho cửa hàng', group: 'Business', priority: 'Cao', completed: false, date: overdue, time: '16:00', notes: 'Công việc trễ ngày cần xử lý gấp' },
+                { id: '6', title: 'Bảo dưỡng xe máy định kỳ', group: 'Living', priority: 'Trung bình', completed: false, date: dayAfter, time: '08:30', notes: '' }
+            ];
+
+            logActivity('SYSTEM', 'Khởi tạo dữ liệu hệ thống Thu Trang Work');
+        }
+
+        function setupHeaderDates() {
+            const now = new Date();
+            const daysVN = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+            const dayName = daysVN[now.getDay()];
+            document.getElementById('header-date').textContent = `${dayName}, ${formatDateVN(now)}`;
+            document.getElementById('header-lunar').textContent = getLunarDateStr(now);
+            document.getElementById('history-date-picker').value = getTodayStr();
+        }
+
+        function setRandomQuote() {
+            const q = VIETNAMESE_QUOTES[Math.floor(Math.random() * VIETNAMESE_QUOTES.length)];
+            document.getElementById('daily-quote').textContent = `"${q}"`;
+        }
+
+        function logActivity(type, details) {
+            const log = {
+                id: 'LOG-' + Date.now(),
+                timestamp: new Date().toLocaleTimeString('vi-VN') + ' ' + formatDateVN(new Date()),
+                type: type,
+                details: details
+            };
+            state.activityLogs.unshift(log);
+            renderActivityLogs();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            const titleMap = {
+                'dashboard': 'Dashboard Today',
+                'tasks': 'Danh sách Công việc',
+                'health': 'Chăm sóc Sức khỏe',
+                'analytics': 'Lịch sử & Phân tích'
+            };
+            document.getElementById('page-title').textContent = titleMap[tabId];
+
+            ['dashboard', 'tasks', 'health', 'analytics'].forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                const mBtn = document.getElementById(`mobile-nav-${id}`);
+                if (id === tabId) {
+                    btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300";
+                    if(mBtn) mBtn.className = "flex flex-col items-center space-y-1 text-amber-600 dark:text-amber-400 p-1";
+                } else {
+                    btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700/50";
+                    if(mBtn) mBtn.className = "flex flex-col items-center space-y-1 text-slate-400 p-1";
+                }
+            });
+
+            renderAll();
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-text').textContent = isDark ? 'Chế độ sáng' : 'Chế độ tối';
+            document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-amber-500';
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderTaskFilters();
+            renderTasksTable();
+            renderHealth();
+            renderHistoryView();
+        }
+
+        // 1. DASHBOARD TODAY RENDERER
+        function renderDashboard() {
+            const today = getTodayStr();
+            const todayTasks = state.tasks.filter(t => t.date === today);
+
+            const total = todayTasks.length;
+            const completed = todayTasks.filter(t => t.completed).length;
+            
+            // AUTOMATIC OVERDUE CALCULATION: Tasks before today that are NOT completed
+            const overdue = state.tasks.filter(t => t.date < today && !t.completed).length;
+            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            document.getElementById('dash-total-tasks').textContent = total;
+            document.getElementById('dash-completed-tasks').textContent = completed;
+            document.getElementById('dash-overdue-tasks').textContent = overdue;
+            document.getElementById('dash-completion-rate').textContent = `${rate}%`;
+
+            // Water Sync
+            document.getElementById('dash-water-intake').textContent = state.health.waterCurrent;
+            document.getElementById('dash-water-goal').textContent = state.health.waterGoal;
+
+            // Timeline Tasks
+            const timelineContainer = document.getElementById('dash-timeline-list');
+            timelineContainer.innerHTML = '';
+
+            if (todayTasks.length === 0) {
+                timelineContainer.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">Không có công việc nào lên lịch cho hôm nay.</p>`;
+            } else {
+                todayTasks.sort((a, b) => a.time.localeCompare(b.time)).forEach(task => {
+                    const groupInfo = GROUPS[task.group] || GROUPS['Full-time'];
+                    const isDone = task.completed;
+
+                    const itemHtml = `
+                        <div class="relative pl-7 flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-100 dark:border-slate-700/60">
+                            <div class="absolute left-2.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full ${isDone ? 'bg-emerald-500' : 'bg-amber-500'} ring-4 ring-white dark:ring-slate-800"></div>
+                            
+                            <div class="flex items-center space-x-3 min-w-0">
+                                <span class="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/20 px-2 py-1 rounded-md shrink-0">
+                                    ${task.time}
+                                </span>
+                                <div class="truncate">
+                                    <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate ${isDone ? 'line-through text-slate-400' : ''}">
+                                        ${task.title}
+                                    </h4>
+                                    <span class="inline-flex items-center text-[10px] ${groupInfo.color} px-1.5 py-0.5 rounded mt-0.5">
+                                        <i class="${groupInfo.icon} mr-1"></i>${groupInfo.name}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <span class="text-[11px] font-medium px-2.5 py-1 rounded-lg shrink-0 ${isDone ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-600 dark:text-slate-300'}">
+                                ${isDone ? '✓ Hoàn thành' : 'Chưa xong'}
+                            </span>
+                        </div>
+                    `;
+                    timelineContainer.insertAdjacentHTML('beforeend', itemHtml);
+                });
+            }
+
+            // Summary Section Text
+            document.getElementById('summary-progress-text').textContent = `${completed}/${total} việc hoàn thành (${rate}%)`;
+            document.getElementById('summary-remaining-text').textContent = `${overdue} công việc`;
+            document.getElementById('summary-action-text').textContent = overdue > 0 ? `Cần xử lý ${overdue} việc quá hạn!` : 'Tất cả việc trễ đã được giải quyết';
+        }
+
+        // 2. TASK LIST RENDERER & FILTERS
+        function renderTaskFilters() {
+            const today = getTodayStr();
+            const tomorrow = getRelativeDateStr(1);
+            const dayAfter = getRelativeDateStr(2);
+            const in7Days = getRelativeDateStr(7);
+
+            // Automatic overdue count: date < today AND not completed
+            const counts = {
+                overdue: state.tasks.filter(t => t.date < today && !t.completed).length,
+                today: state.tasks.filter(t => t.date === today).length,
+                tomorrow: state.tasks.filter(t => t.date === tomorrow).length,
+                dayAfter: state.tasks.filter(t => t.date === dayAfter).length,
+                next7Days: state.tasks.filter(t => t.date >= today && t.date <= in7Days).length,
+                nextMonth: state.tasks.filter(t => t.date > in7Days).length
+            };
+
+            const filters = [
+                { id: 'overdue', label: 'Đang trễ', dateStr: 'Quá hạn', count: counts.overdue, color: 'text-rose-600' },
+                { id: 'today', label: 'Hôm nay', dateStr: formatDateVN(new Date()), count: counts.today, color: 'text-amber-600' },
+                { id: 'tomorrow', label: 'Ngày mai', dateStr: formatDateVN(new Date(Date.now() + 86400000)), count: counts.tomorrow, color: 'text-blue-600' },
+                { id: 'dayAfter', label: 'Ngày kia', dateStr: formatDateVN(new Date(Date.now() + 172800000)), count: counts.dayAfter, color: 'text-indigo-600' },
+                { id: 'next7Days', label: 'Trong 7 ngày tới', dateStr: '7 ngày', count: counts.next7Days, color: 'text-purple-600' },
+                { id: 'nextMonth', label: 'Trong tháng tiếp theo', dateStr: 'Tháng tới', count: counts.nextMonth, color: 'text-emerald-600' }
+            ];
+
+            const container = document.getElementById('task-filter-tabs');
+            container.innerHTML = '';
+
+            filters.forEach(f => {
+                const isActive = state.activeFilterTab === f.id;
+                const btn = document.createElement('button');
+                btn.onclick = () => { state.activeFilterTab = f.id; renderTaskFilters(); renderTasksTable(); };
+                btn.className = `px-3 py-2 rounded-xl text-xs font-semibold shrink-0 transition flex items-center space-x-2 border ${
+                    isActive 
+                    ? 'bg-amber-400 text-amber-950 border-amber-400 shadow-sm' 
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                }`;
+
+                btn.innerHTML = `
+                    <span>${f.label}</span>
+                    <span class="text-[10px] opacity-75 font-normal">(${f.dateStr})</span>
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-amber-950 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'} font-bold">
+                        ${f.count}
+                    </span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function renderTasksTable() {
+            const today = getTodayStr();
+            const tomorrow = getRelativeDateStr(1);
+            const dayAfter = getRelativeDateStr(2);
+            const in7Days = getRelativeDateStr(7);
+
+            let filteredTasks = state.tasks;
+
+            switch(state.activeFilterTab) {
+                case 'overdue':
+                    filteredTasks = state.tasks.filter(t => t.date < today && !t.completed);
+                    break;
+                case 'today':
+                    filteredTasks = state.tasks.filter(t => t.date === today);
+                    break;
+                case 'tomorrow':
+                    filteredTasks = state.tasks.filter(t => t.date === tomorrow);
+                    break;
+                case 'dayAfter':
+                    filteredTasks = state.tasks.filter(t => t.date === dayAfter);
+                    break;
+                case 'next7Days':
+                    filteredTasks = state.tasks.filter(t => t.date >= today && t.date <= in7Days);
+                    break;
+                case 'nextMonth':
+                    filteredTasks = state.tasks.filter(t => t.date > in7Days);
+                    break;
+            }
+
+            const tbody = document.getElementById('tasks-table-body');
+            tbody.innerHTML = '';
+
+            if (filteredTasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-xs text-slate-400">Không có công việc nào trong danh mục này.</td></tr>`;
+                return;
+            }
+
+            filteredTasks.forEach(task => {
+                const groupInfo = GROUPS[task.group] || GROUPS['Full-time'];
+
+                const priorityBadge = {
+                    'Cao': 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
+                    'Trung bình': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+                    'Thấp': 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                }[task.priority];
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/60 dark:hover:bg-slate-700/30 transition text-xs";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-100">
+                        <div class="${task.completed ? 'line-through text-slate-400' : ''}">${task.title}</div>
+                        <span class="text-[10px] text-slate-400 font-normal"><i class="fa-regular fa-clock mr-1"></i>${formatDateVN(task.date)} - ${task.time}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="inline-flex items-center space-x-1.5 px-2 py-1 rounded-lg font-medium text-[11px] ${groupInfo.color}">
+                            <i class="${groupInfo.icon}"></i>
+                            <span>${groupInfo.name}</span>
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded-md font-medium text-[11px] ${priorityBadge}">
+                            ${task.priority}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <label class="inline-flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTaskDone('${task.id}')" class="w-4 h-4 text-amber-500 rounded border-slate-300 focus:ring-amber-400">
+                            <span class="text-xs font-semibold ${task.completed ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}">
+                                ${task.completed ? 'Hoàn thành' : 'Chưa xong'}
+                            </span>
+                        </label>
+                    </td>
+                    <td class="py-3 px-4 text-slate-500 max-w-xs truncate">${task.notes || '—'}</td>
+                    <td class="py-3 px-4 text-right space-x-2">
+                        <button onclick="editTask('${task.id}')" class="text-amber-600 hover:text-amber-800 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteTask('${task.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleTaskDone(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                logActivity('TASK_STATUS', `Đã ${task.completed ? 'hoàn thành' : 'bỏ hoàn thành'} công việc: "${task.title}"`);
+                renderAll();
+            }
+        }
+
+        // 3. HEALTH TRACKER LOGIC
+        function renderHealth() {
+            document.getElementById('health-goal-display').textContent = state.health.waterGoal;
+            document.getElementById('health-water-current').textContent = `${state.health.waterCurrent} ml`;
+
+            const percent = Math.min(100, Math.round((state.health.waterCurrent / state.health.waterGoal) * 100));
+            document.getElementById('health-water-percent').textContent = `${percent}% mục tiêu ngày`;
+            document.getElementById('health-water-bar').style.width = `${percent}%`;
+        }
+
+        function addWater(amount) {
+            state.health.waterCurrent += amount;
+            logActivity('WATER', `Đã uống thêm ${amount}ml nước.`);
+            renderDashboard();
+            renderHealth();
+        }
+
+        function resetWater() {
+            state.health.waterCurrent = 0;
+            logActivity('WATER', 'Đặt lại lượng nước uống về 0ml.');
+            renderDashboard();
+            renderHealth();
+        }
+
+        function setWaterGoalPrompt() {
+            const val = prompt("Tự nhập mục tiêu lượng nước mỗi ngày (ml):", state.health.waterGoal);
+            if (val && !isNaN(val) && parseInt(val) > 0) {
+                state.health.waterGoal = parseInt(val);
+                logActivity('WATER_GOAL', `Cập nhật mục tiêu nước thành ${val}ml`);
+                renderDashboard();
+                renderHealth();
+            }
+        }
+
+        function setMood(mood) {
+            state.health.todayMood = mood;
+            logActivity('MOOD', `Cập nhật tâm trạng hôm nay: ${mood}`);
+        }
+
+        function updateSleepGoal() {
+            const val = document.getElementById('sleep-target-time').value;
+            state.health.sleepGoalTime = val;
+            logActivity('SLEEP_GOAL', `Đặt lịch đi ngủ: ${val}`);
+        }
+
+        // 4. TASK MODAL ACTIONS
+        function openTaskModal() {
+            document.getElementById('task-id').value = '';
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-notes').value = '';
+            document.getElementById('task-date').value = getTodayStr();
+            document.getElementById('modal-title').textContent = 'Thêm công việc mới';
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+
+        function closeTaskModal() {
+            document.getElementById('task-modal').classList.add('hidden');
+        }
+
+        function handleSaveTask(e) {
+            e.preventDefault();
+            const id = document.getElementById('task-id').value;
+            const title = document.getElementById('task-title').value;
+            const group = document.getElementById('task-group').value;
+            const priority = document.getElementById('task-priority').value;
+            const date = document.getElementById('task-date').value;
+            const time = document.getElementById('task-time').value;
+            const notes = document.getElementById('task-notes').value;
+
+            if (id) {
+                const index = state.tasks.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    state.tasks[index] = { ...state.tasks[index], title, group, priority, date, time, notes };
+                    logActivity('TASK_UPDATE', `Cập nhật công việc: "${title}"`);
+                }
+            } else {
+                const newTask = {
+                    id: 'TASK-' + Date.now(),
+                    title, group, priority, completed: false, date, time, notes
+                };
+                state.tasks.push(newTask);
+                logActivity('TASK_CREATE', `Tạo công việc mới: "${title}"`);
+                
+                // Gửi thông báo xác nhận tạo công việc thành công
+                sendPushNotification("Đã tạo công việc mới", `"${title}" đặt vào lúc ${time} ngày ${formatDateVN(date)}`);
+            }
+
+            closeTaskModal();
+            renderAll();
+        }
+
+        function editTask(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('task-id').value = task.id;
+            document.getElementById('task-title').value = task.title;
+            document.getElementById('task-group').value = task.group;
+            document.getElementById('task-priority').value = task.priority;
+            document.getElementById('task-date').value = task.date;
+            document.getElementById('task-time').value = task.time;
+            document.getElementById('task-notes').value = task.notes;
+            document.getElementById('modal-title').textContent = 'Chỉnh sửa công việc';
+
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+
+        function deleteTask(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (confirm(`Bạn có chắc chắn muốn xóa công việc "${task?.title}"?`)) {
+                state.tasks = state.tasks.filter(t => t.id !== id);
+                logActivity('TASK_DELETE', `Đã xóa công việc: "${task?.title}"`);
+                renderAll();
+            }
+        }
+
+        // 5. HISTORY & ANALYTICS SECTION
+        function setHistoryView(view) {
+            state.historyView = view;
+            ['day', 'month', 'year'].forEach(v => {
+                document.getElementById(`history-sub-${v}`).classList.add('hidden');
+                document.getElementById(`btn-hist-${v}`).className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-300";
+            });
+
+            document.getElementById(`history-sub-${view}`).classList.remove('hidden');
+            document.getElementById(`btn-hist-${view}`).className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm";
+
+            renderHistoryView();
+        }
+
+        function renderHistoryView() {
+            if (state.historyView === 'day') renderHistoryDay();
+            if (state.historyView === 'month') renderHistoryMonth();
+            if (state.historyView === 'year') renderHistoryYear();
+        }
+
+        function renderHistoryDay() {
+            const dateStr = document.getElementById('history-date-picker').value;
+            const groupFilter = document.getElementById('history-group-filter').value;
+
+            let dayTasks = state.tasks.filter(t => t.date === dateStr);
+            if (groupFilter !== 'ALL') dayTasks = dayTasks.filter(t => t.group === groupFilter);
+
+            const container = document.getElementById('history-day-content');
+            container.innerHTML = `
+                <h4 class="font-bold text-slate-800 dark:text-white text-sm">Nhật ký hoạt động ngày ${formatDateVN(dateStr)}</h4>
+            `;
+
+            if (dayTasks.length === 0) {
+                container.insertAdjacentHTML('beforeend', `<p class="text-xs text-slate-400">Không có dữ liệu công việc trong ngày này.</p>`);
+                return;
+            }
+
+            dayTasks.forEach(task => {
+                const groupInfo = GROUPS[task.group] || GROUPS['Full-time'];
+                const html = `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="font-semibold text-slate-800 dark:text-white ${task.completed ? 'line-through text-slate-400' : ''}">${task.title}</span>
+                            <div class="mt-1 flex items-center space-x-2">
+                                <span class="px-1.5 py-0.5 rounded text-[10px] ${groupInfo.color}">${groupInfo.name}</span>
+                                <span class="text-slate-400">${task.time}</span>
+                            </div>
+                        </div>
+                        <span class="font-bold ${task.completed ? 'text-emerald-600' : 'text-amber-600'}">${task.completed ? 'Hoàn thành' : 'Chưa xong'}</span>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderHistoryMonth() {
+            const groupFilter = document.getElementById('history-group-filter').value;
+            const titleEl = document.getElementById('month-calendar-title');
+            titleEl.textContent = `Tháng ${state.selectedMonth + 1}, ${state.selectedYear}`;
+
+            const grid = document.getElementById('month-calendar-grid');
+            grid.innerHTML = '';
+
+            const daysInMonth = new Date(state.selectedYear, state.selectedMonth + 1, 0).getDate();
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${state.selectedYear}-${String(state.selectedMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                let tasks = state.tasks.filter(t => t.date === dateStr);
+                if (groupFilter !== 'ALL') tasks = tasks.filter(t => t.group === groupFilter);
+
+                const dayCell = document.createElement('div');
+                dayCell.className = "min-h-[90px] p-1.5 bg-slate-50 dark:bg-slate-700/30 border border-slate-100 dark:border-slate-700 rounded-xl flex flex-col justify-start space-y-1";
+
+                let linesHtml = '';
+                tasks.forEach(t => {
+                    const colorClass = t.completed ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300';
+                    linesHtml += `<div class="text-[9px] font-medium px-1 py-0.5 rounded border ${colorClass} truncate" title="${t.title}">${t.title}</div>`;
+                });
+
+                dayCell.innerHTML = `
+                    <div class="text-[10px] font-bold text-slate-500">${d}</div>
+                    <div class="space-y-0.5 overflow-hidden">${linesHtml}</div>
+                `;
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function changeMonth(offset) {
+            state.selectedMonth += offset;
+            if (state.selectedMonth < 0) {
+                state.selectedMonth = 11;
+                state.selectedYear--;
+            } else if (state.selectedMonth > 11) {
+                state.selectedMonth = 0;
+                state.selectedYear++;
+            }
+            renderHistoryMonth();
+        }
+
+        function renderHistoryYear() {
+            document.getElementById('current-year-display').textContent = state.selectedYear;
+            const container = document.getElementById('yearly-heatmap-grid');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= 365; i++) {
+                const square = document.createElement('div');
+                const intensity = Math.floor(Math.random() * 4);
+                const bgClass = [
+                    'bg-slate-100 dark:bg-slate-700',
+                    'bg-amber-200',
+                    'bg-amber-400',
+                    'bg-amber-600'
+                ][intensity];
+
+                square.className = `w-3.5 h-3.5 rounded-sm ${bgClass} cursor-pointer hover:ring-2 hover:ring-amber-500 transition`;
+                square.title = `Ngày thứ ${i} trong năm ${state.selectedYear}`;
+                container.appendChild(square);
+            }
+        }
+
+        function changeYear(offset) {
+            state.selectedYear += offset;
+            renderHistoryYear();
+        }
+
+        function renderActivityLogs() {
+            const container = document.getElementById('activity-log-container');
+            container.innerHTML = '';
+
+            state.activityLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.className = "py-1.5 flex items-center justify-between text-slate-600 dark:text-slate-300";
+                div.innerHTML = `
+                    <span><strong class="text-amber-600">[${log.type}]</strong> ${log.details}</span>
+                    <span class="text-[10px] text-slate-400 shrink-0 ml-2">${log.timestamp}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
